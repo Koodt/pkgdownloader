@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import re
+import shutil
 
 import sys
 import certifi
@@ -11,9 +12,10 @@ import argparse
 
 from bs4 import BeautifulSoup
 
-parser = argparse.ArgumentParser(description='Debian package downloader')
+parser = argparse.ArgumentParser(description='Package downloader. Now only from packages.debian.org', usage='%(prog)s -p tmux aptitude vim -d stable')
 parser.add_argument('-p', '--package', nargs='*', dest='packageName', help='package name list, use: -p libmsgpack-dev aptitude tmux')
-parser.add_argument('-d', '--distro', action='store', dest='packageDistrib', help='dist, use: -d sid. FYI: jessie, stretch, buster, sid')
+parser.add_argument('-d', '--distro', action='store', dest='packageDistrib', help='dist, use: -d sid. FYI: jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
+parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path', metavar="FILE")
 args = parser.parse_args()
 
 if len(sys.argv) < 2:
@@ -28,14 +30,23 @@ def checkLinkStatus(myURL):
     r = http.request('GET', myURL)
     return r.status
 
-def getLink(packageName, packageDistrib):
-    r = http.request('GET', 'https://packages.debian.org/' + packageDistrib + '/amd64/' + packageName + '/download')
+def getLink(url):
+    linksArray = []
+    r = http.request('GET', url)
     soup = BeautifulSoup(r.data, 'html.parser')
-    for link in soup.find_all('a', attrs={'href': re.compile("^http://ftp.ru")}):
+    for link in soup.find_all('a', attrs={'href': re.compile('^http://ftp.ru')}):
         if checkLinkStatus(link.get('href')) == 200:
-            print(link.get('href'))
+            linksArray.append(link.get('href'))
+    return linksArray
+
+def getFileFromURL(url, path, package):
+    for url in getLink(url):
+        with http.request('GET', url, preload_content=False) as r, \
+        open(path + '/' + str(re.compile(package+'_.*').findall(url)).strip('\"\"\'\'[]'), 'wb') as out_file:
+            shutil.copyfileobj(r, out_file)
 
 def main():
     if checkLinkStatus('https://packages.debian.org') == 200:
         for package in args.packageName:
-            getLink(package, args.packageDistrib)
+            url = 'https://packages.debian.org/' + args.packageDistrib + '/amd64/' + package + '/download'
+            getFileFromURL(url, args.path, package)
