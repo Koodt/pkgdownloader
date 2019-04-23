@@ -12,10 +12,10 @@ import argparse
 
 from bs4 import BeautifulSoup
 
-parser = argparse.ArgumentParser(description='Package downloader. Now only from packages.debian.org', usage='%(prog)s -p tmux aptitude vim -d stable')
+parser = argparse.ArgumentParser(description='Package downloader. Now only from packages.debian.org', usage='%(prog)s -p tmux aptitude vim -d stable -P /dir')
 parser.add_argument('-p', '--package', nargs='*', dest='packageName', help='package name list, use: -p libmsgpack-dev aptitude tmux')
-parser.add_argument('-d', '--distro', action='store', dest='packageDistrib', help='dist, use: -d sid. FYI: jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
-parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path', metavar="FILE")
+parser.add_argument('-d', '--distro', nargs='*', dest='packageDistrib', help='dist, use: -d sid. FYI: all for all, jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
+parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path, default: /tmp', metavar="FILE")
 args = parser.parse_args()
 
 if len(sys.argv) < 2:
@@ -47,6 +47,12 @@ def getFileFromURL(url, path, package):
 
 def main():
     if checkLinkStatus('https://packages.debian.org') == 200:
+        if args.packageDistrib == ['all']:
+            packageDistrib = ['jessie', 'stretch', 'stretch-backports', 'buster', 'sid']
+        else:
+            packageDistrib = args.packageDistrib
+        print(packageDistrib)
         for package in args.packageName:
-            url = 'https://packages.debian.org/' + args.packageDistrib + '/amd64/' + package + '/download'
-            getFileFromURL(url, args.path, package)
+            for distrib in packageDistrib:
+                url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
+                getFileFromURL(url, args.path, package)
