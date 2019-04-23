@@ -20,10 +20,10 @@ pkgdownload -p tmux aptitude vim -d stable -P /srv
 
 pkgdownload -p tmux -d all
 
--p, --package - multiply package list: tmux vim aptitude glibc6
+-p, --package - alone or multiply package list: tmux vim aptitude glibc6
 
 
--d, --distro  - distrib: jessie, oldstable, stretch, stable, buster, testing, sid, unstable
+-d, --distro  - alone or multiply distrib: jessie, oldstable, stretch, stable, buster, testing, sid, unstable
                 all - for all distribution
 
 -P, --path    - path to save packages: /folder/to/save, default /tmp
