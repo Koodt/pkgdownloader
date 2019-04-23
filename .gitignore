@@ -1,0 +1,8 @@
+.*
+*.deb
+*.pyc
+*.egg-info
+__pycache__
+tags
+deb-*/
+!.git*
