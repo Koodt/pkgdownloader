@@ -24,7 +24,6 @@ pkgdownload -p tmux -d all
 
 
 -d, --distro  - distrib: jessie, oldstable, stretch, stable, buster, testing, sid, unstable
-                
                 all - for all distribution
 
 -P, --path    - path to save packages: /folder/to/save, default /tmp
