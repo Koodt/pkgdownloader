@@ -51,6 +51,9 @@ def getFileFromURL(path, distrib, package):
             shutil.copyfileobj(r, out_file)
         print('[+++] Download %s complete' % fileName)
 
+def getDwpwndenciesFromDSC():
+    return
+
 def main():
     if checkLinkStatus('https://packages.debian.org') == 200:
         if args.packageDistrib == ['all']:
