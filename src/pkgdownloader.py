@@ -35,7 +35,7 @@ def getLink(packageName, packageDistrib):
         if checkLinkStatus(link.get('href')) == 200:
             print(link.get('href'))
 
-if __name__ == '__main__':
+def main():
     if checkLinkStatus('https://packages.debian.org') == 200:
         for package in args.packageName:
             getLink(package, args.packageDistrib)
