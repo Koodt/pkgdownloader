@@ -16,7 +16,7 @@ USAGE:
 
 pkgdownload -p tmux aptitude vim -d stable -P /srv
 
-### Download tmux from all Distribution to default dir
+### Download tmux from all distribution to default dir
 
 pkgdownload -p tmux -d all
 
