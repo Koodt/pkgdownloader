@@ -49,9 +49,9 @@ def getFileFromURL(path, distrib, package):
         with http.request('GET', url, preload_content=False) as r, \
         open(path + '/' + fileName, 'wb') as out_file:
             shutil.copyfileobj(r, out_file)
-        print('[+++] Download %s complete' % fileName)
+        print('[+++] Download %s to %s complete' % (fileName, path))
 
-def getDwpwndenciesFromDSC():
+def getDependenciesFromDSC():
     return
 
 def main():
