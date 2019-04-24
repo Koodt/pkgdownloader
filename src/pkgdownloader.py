@@ -77,11 +77,12 @@ def dl(args):
     linksArray = []
     for package in args.packageName:
         for distrib in packageDistribList(args):
-            link = getLink(distrib, package)
-            if link:
-                linksArray.append(link)
-            else:
-                print('[ ! ] Link for %s from %s not found' % (package, distrib))
+            for arch in args.packageArch:
+                link = getLink(distrib, package, arch)
+                if link:
+                    linksArray.append(link)
+                else:
+                    print('[ ! ] Link for %s from %s not found' % (package, distrib))
 
     for link in linksArray:
         fileName = str(re.compile('[^/]*_.*').findall(link)).strip('\"\"\'\'[]')
