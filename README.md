@@ -14,11 +14,15 @@ pip uninstall pkgdownloader
 
 ### Download tmux, aptitude, vim from Stable distribution to /srv
 
-pkgdownload -p tmux aptitude vim -d stable -P /srv
+pkgdownload dl -p tmux aptitude vim -d stable -P /srv
 
-### Download tmux from all distribution to default dir
+### Get link tmux from all distribution to default dir
 
-pkgdownload -p tmux -d all
+pkgdownload link -p tmux -d all
+
+link                Get links, without downloading
+dl                  Download packages
+deps                Get dependencies list
 
 -p, --package - alone or multiply package list: tmux vim aptitude glibc6
 
