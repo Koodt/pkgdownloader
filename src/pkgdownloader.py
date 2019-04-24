@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import re
+import os
 import shutil
 
 import sys
@@ -45,11 +46,15 @@ def getFileFromURL(path, distrib, package):
     url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
     for url in getLink(url, distrib, package):
         fileName = str(re.compile(package+'_.*').findall(url)).strip('\"\"\'\'[]')
-        print('[...] Downloading %s' % fileName)
-        with http.request('GET', url, preload_content=False) as r, \
-        open(path + '/' + fileName, 'wb') as out_file:
-            shutil.copyfileobj(r, out_file)
-        print('[+++] Download %s to %s complete' % (fileName, path))
+        targetFile = path + '/' + fileName
+        if os.path.isfile(targetFile):
+            print('[!!!] File exists')
+        else:
+            print('[...] Downloading %s' % fileName)
+            with http.request('GET', url, preload_content=False) as r, \
+            open(targetFile, 'wb') as out_file:
+                shutil.copyfileobj(r, out_file)
+            print('[+++] Download %s to %s complete' % (fileName, path))
 
 def getDependenciesFromDSC():
     return
