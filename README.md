@@ -20,6 +20,8 @@ pkgdownload dl -p tmux aptitude vim -d stable -P /srv
 
 pkgdownload link -p tmux -d all
 
+### Arguments
+
 link      - Get links, without downloading
 
 dl        - Download packages
