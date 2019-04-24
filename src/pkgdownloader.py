@@ -20,11 +20,11 @@ def parseArgs():
     parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path, default: /tmp', metavar="FILE")
     subparsers = parser.add_subparsers()
     parser_link = subparsers.add_parser('link', parents=[parser], help='Get links, without downloading')
-    parser_link.set_defaults(func=link)
+    parser_link.set_defaults(act=link)
     parser_dl = subparsers.add_parser('dl', parents=[parser], help='Download packages')
-    parser_dl.set_defaults(func=dl)
+    parser_dl.set_defaults(act=dl)
     parser_deps = subparsers.add_parser('deps', parents=[parser], help='Get dependencies list')
-    parser_deps.set_defaults(func=deps)
+    parser_deps.set_defaults(act=deps)
     return parser.parse_args()
 
 if len(sys.argv) < 2:
@@ -111,6 +111,6 @@ def deps(args):
 def main():
     args = parseArgs()
     try:
-        args.func(args)
+        args.act(args)
     except AttributeError:
         print('You know hothing!')
