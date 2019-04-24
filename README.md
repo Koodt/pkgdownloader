@@ -16,7 +16,7 @@ pip uninstall pkgdownloader
 
 pkgdownload dl -p tmux aptitude vim -d stable -P /srv
 
-### Get link tmux from all distribution to default dir
+### Get link tmux from all distribution
 
 pkgdownload link -p tmux -d all
 
