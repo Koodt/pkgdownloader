@@ -1,7 +1,9 @@
 import re
 import os
 import shutil
+import uuid
 
+import gzip
 import sys
 import certifi
 import urllib3
@@ -18,7 +20,11 @@ def parseArgs():
     parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path, default: /tmp', metavar="FILE")
     subparsers = parser.add_subparsers()
     parser_link = subparsers.add_parser('link', parents=[parser], help='Get links, without downloading')
+    parser_link.set_defaults(func=link)
+    parser_dl = subparsers.add_parser('dl', parents=[parser], help='Download packages')
+    parser_dl.set_defaults(func=dl)
     parser_deps = subparsers.add_parser('deps', parents=[parser], help='Get dependencies list')
+    parser_deps.set_defaults(func=deps)
     return parser.parse_args()
 
 if len(sys.argv) < 2:
@@ -50,6 +56,12 @@ def getLink(url, distrib, package):
 
     return linksArray
 
+def downloadFile(url, targetFile):
+    with http.request('GET', url, preload_content=False) as r, \
+    open(targetFile, 'wb') as out_file:
+        shutil.copyfileobj(r, out_file)
+    return
+
 def getFileFromURL(path, distrib, package):
 
     url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
@@ -63,20 +75,22 @@ def getFileFromURL(path, distrib, package):
             print('[!!!] File exists')
         else:
             print('[...] Downloading %s' % fileName)
-            with http.request('GET', url, preload_content=False) as r, \
-            open(targetFile, 'wb') as out_file:
-                shutil.copyfileobj(r, out_file)
+            downloadFile(url, targetFile)
             print('[+++] Download %s to %s complete' % (fileName, path))
 
 def getDependenciesFromDSC():
     return
 
-def getRepoPackagesFile():
+def getRepoPackagesFile(distrib, arch, comp):
+    filename = str(uuid.uuid4())
+    targetFile = '/tmp/' + filename
 #    http://ftp.ru.debian.org/debian/dists/sid/main/binary-amd64/Packages
+    url = 'http://ftp.ru.debian.org/debian/dists/' + distrib + '/' + comp + '/binary-' + arch + '/Packages.gz'
+    downloadFile(url, targetFile)
+
     return
 
-def main():
-    args = parseArgs()
+def dl(args):
     if checkLinkStatus('https://packages.debian.org') == 200:
 
         if args.packageDistrib == ['all']:
@@ -88,4 +102,15 @@ def main():
             for distrib in packageDistrib:
                 getFileFromURL(args.path, distrib, package)
 
-    getRepoPackagesFile()
+def link(args):
+    print('John Snow')
+
+def deps(args):
+    print('Aegon?')
+
+def main():
+    args = parseArgs()
+    try:
+        args.func(args)
+    except AttributeError:
+        print('You know hothing!')
