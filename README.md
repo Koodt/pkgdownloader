@@ -20,11 +20,11 @@ pkgdownload dl -p tmux aptitude vim -d stable -P /srv
 
 pkgdownload link -p tmux -d all
 
-link                Get links, without downloading
+link      - Get links, without downloading
 
-dl                  Download packages
+dl        - Download packages
 
-deps                Get dependencies list
+deps      - Get dependencies list
 
 -p, --package - alone or multiply package list: tmux vim aptitude glibc6
 
