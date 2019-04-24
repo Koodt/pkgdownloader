@@ -44,31 +44,21 @@ def checkLinkStatus(myURL):
 def getLink(distrib, package):
     url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
     print('[...] Finding links for %s from %s' % (package, distrib))
-
-    linksArray = []
     r = http.request('GET', url)
     soup = BeautifulSoup(r.data, 'html.parser')
-
     for link in soup.find_all('a', attrs={'href': re.compile('^http://ftp.ru')}):
         print('[ + ] For %s link find' % distrib)
         return link.get('href')
 
-def downloadFile(url, targetFile):
-    with http.request('GET', url, preload_content=False) as r, \
-    open(targetFile, 'wb') as out_file:
-        shutil.copyfileobj(r, out_file)
-    return
-
-def getFileFromURL(path, distrib, package):
-    fileName = str(re.compile(package+'_.*').findall(url)).strip('\"\"\'\'[]')
-    targetFile = path + '/' + fileName
-
+def downloadFile(link, targetFile):
     if os.path.isfile(targetFile):
-        print('[!!!] File exists')
+        print('[!!!] File %s exists' % targetFile)
     else:
-        print('[...] Downloading %s' % fileName)
-        downloadFile(url, targetFile)
-        print('[+++] Download %s to %s complete' % (fileName, path))
+        print('[...] Downloading %s' % targetFile)
+        with http.request('GET', link, preload_content=False) as r, \
+        open(targetFile, 'wb') as out_file:
+            shutil.copyfileobj(r, out_file)
+            print('[+++] Download %s complete' % targetFile)
 
 def getDependenciesFromDSC():
     return
@@ -76,11 +66,8 @@ def getDependenciesFromDSC():
 def getRepoPackagesFile(distrib, arch, comp):
     filename = str(uuid.uuid4())
     targetFile = '/tmp/' + filename
-#    http://ftp.ru.debian.org/debian/dists/sid/main/binary-amd64/Packages
     url = 'http://ftp.ru.debian.org/debian/dists/' + distrib + '/' + comp + '/binary-' + arch + '/Packages.gz'
     downloadFile(url, targetFile)
-
-    return
 
 def packageDistribList(args):
     if args.packageDistrib == ['all']:
@@ -90,15 +77,32 @@ def packageDistribList(args):
     return packageDistrib
 
 def dl(args):
+    linksArray = []
     for package in args.packageName:
         for distrib in packageDistribList(args):
-            getFileFromURL(args.path, distrib, package)
+            link = getLink(distrib, package)
+            if link:
+                linksArray.append(link)
+            else:
+                print('[ ! ] Link for %s from %s not found' % (package, distrib))
+
+    for link in linksArray:
+        fileName = str(re.compile('[^/]*_.*').findall(link)).strip('\"\"\'\'[]')
+        targetFile = args.path + '/' + fileName
+        downloadFile(link, targetFile)
 
 def link(args):
+    linksArray = []
     for package in args.packageName:
         for distrib in packageDistribList(args):
-            print(getLink(distrib, package))
-    print('John Snow')
+            link = getLink(distrib, package)
+            if link:
+                linksArray.append(link)
+            else:
+                print('Links not found')
+
+    for link in linksArray:
+        print(link)
 
 def deps(args):
     print('Aegon?')
