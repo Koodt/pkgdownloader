@@ -41,8 +41,8 @@ def checkLinkStatus(myURL):
 
     return r.status
 
-def getLink(url, distrib, package):
-
+def getLink(distrib, package):
+    url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
     print('[...] Finding links for %s from %s' % (package, distrib))
 
     linksArray = []
@@ -51,9 +51,7 @@ def getLink(url, distrib, package):
 
     for link in soup.find_all('a', attrs={'href': re.compile('^http://ftp.ru')}):
         print('[ + ] For %s link find' % distrib)
-        linksArray.append(link.get('href'))
-
-    return linksArray
+        return link.get('href')
 
 def downloadFile(url, targetFile):
     with http.request('GET', url, preload_content=False) as r, \
@@ -62,19 +60,15 @@ def downloadFile(url, targetFile):
     return
 
 def getFileFromURL(path, distrib, package):
-    url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
+    fileName = str(re.compile(package+'_.*').findall(url)).strip('\"\"\'\'[]')
+    targetFile = path + '/' + fileName
 
-    for url in getLink(url, distrib, package):
-
-        fileName = str(re.compile(package+'_.*').findall(url)).strip('\"\"\'\'[]')
-        targetFile = path + '/' + fileName
-
-        if os.path.isfile(targetFile):
-            print('[!!!] File exists')
-        else:
-            print('[...] Downloading %s' % fileName)
-            downloadFile(url, targetFile)
-            print('[+++] Download %s to %s complete' % (fileName, path))
+    if os.path.isfile(targetFile):
+        print('[!!!] File exists')
+    else:
+        print('[...] Downloading %s' % fileName)
+        downloadFile(url, targetFile)
+        print('[+++] Download %s to %s complete' % (fileName, path))
 
 def getDependenciesFromDSC():
     return
@@ -101,7 +95,9 @@ def dl(args):
             getFileFromURL(args.path, distrib, package)
 
 def link(args):
-
+    for package in args.packageName:
+        for distrib in packageDistribList(args):
+            print(getLink(distrib, package))
     print('John Snow')
 
 def deps(args):
