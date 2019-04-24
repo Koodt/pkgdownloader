@@ -50,9 +50,8 @@ def getLink(url, distrib, package):
     soup = BeautifulSoup(r.data, 'html.parser')
 
     for link in soup.find_all('a', attrs={'href': re.compile('^http://ftp.ru')}):
-        if checkLinkStatus(link.get('href')) == 200:
-            print('[!!!] For %s link find' % distrib)
-            linksArray.append(link.get('href'))
+        print('[ + ] For %s link find' % distrib)
+        linksArray.append(link.get('href'))
 
     return linksArray
 
@@ -63,7 +62,6 @@ def downloadFile(url, targetFile):
     return
 
 def getFileFromURL(path, distrib, package):
-
     url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
 
     for url in getLink(url, distrib, package):
@@ -90,19 +88,20 @@ def getRepoPackagesFile(distrib, arch, comp):
 
     return
 
+def packageDistribList(args):
+    if args.packageDistrib == ['all']:
+        packageDistrib = ['jessie', 'stretch', 'stretch-backports', 'buster', 'sid']
+    else:
+        packageDistrib = args.packageDistrib
+    return packageDistrib
+
 def dl(args):
-    if checkLinkStatus('https://packages.debian.org') == 200:
-
-        if args.packageDistrib == ['all']:
-            packageDistrib = ['jessie', 'stretch', 'stretch-backports', 'buster', 'sid']
-        else:
-            packageDistrib = args.packageDistrib
-
-        for package in args.packageName:
-            for distrib in packageDistrib:
-                getFileFromURL(args.path, distrib, package)
+    for package in args.packageName:
+        for distrib in packageDistribList(args):
+            getFileFromURL(args.path, distrib, package)
 
 def link(args):
+
     print('John Snow')
 
 def deps(args):
@@ -110,6 +109,7 @@ def deps(args):
 
 def main():
     args = parseArgs()
+
     try:
         args.act(args)
     except AttributeError:
