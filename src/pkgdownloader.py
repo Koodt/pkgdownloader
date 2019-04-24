@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Package downloader. Now only from packages.debian.org', usage='%(prog)s -p tmux aptitude vim -d stable -P /dir', add_help=False)
+    parser.add_argument('-a', '--arch', nargs='*', dest='packageArch', default='amd64', help='package arch list, use: -a amd64 i386 arm64, default amd64')
     parser.add_argument('-p', '--package', nargs='*', dest='packageName', help='package name list, use: -p libmsgpack-dev aptitude tmux')
     parser.add_argument('-d', '--distro', nargs='*', dest='packageDistrib', help='dist, use: -d sid. FYI: all for all, jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
     parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path, default: /tmp', metavar="FILE")
@@ -36,13 +37,11 @@ http = urllib3.PoolManager(
         ca_certs=certifi.where())
 
 def checkLinkStatus(myURL):
-
     r = http.request('GET', myURL)
-
     return r.status
 
-def getLink(distrib, package):
-    url = 'https://packages.debian.org/' + distrib + '/amd64/' + package + '/download'
+def getLink(distrib, package, arch):
+    url = 'https://packages.debian.org/' + distrib + '/' + arch + '/' + package + '/download'
     print('[...] Finding links for %s from %s' % (package, distrib))
     r = http.request('GET', url)
     soup = BeautifulSoup(r.data, 'html.parser')
@@ -60,14 +59,12 @@ def downloadFile(link, targetFile):
             shutil.copyfileobj(r, out_file)
             print('[+++] Download %s complete' % targetFile)
 
-def getDependenciesFromDSC():
-    return
-
 def getRepoPackagesFile(distrib, arch, comp):
     filename = str(uuid.uuid4())
-    targetFile = '/tmp/' + filename
+    targetFile = '/tmp/' + filename + '.gz'
     url = 'http://ftp.ru.debian.org/debian/dists/' + distrib + '/' + comp + '/binary-' + arch + '/Packages.gz'
     downloadFile(url, targetFile)
+    return targetFile
 
 def packageDistribList(args):
     if args.packageDistrib == ['all']:
@@ -95,17 +92,19 @@ def link(args):
     linksArray = []
     for package in args.packageName:
         for distrib in packageDistribList(args):
-            link = getLink(distrib, package)
-            if link:
-                linksArray.append(link)
-            else:
-                print('Links not found')
+            for arch in args.packageArch:
+                link = getLink(distrib, package, arch)
+                if link:
+                    linksArray.append(link)
+                else:
+                    print('[ - ] Links not found')
 
     for link in linksArray:
         print(link)
 
 def deps(args):
-    print('Aegon?')
+
+    print(getRepoPackagesFile(args.packageDistrib, 'amd64', 'main'))
 
 def main():
     args = parseArgs()
