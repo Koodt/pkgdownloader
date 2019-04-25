@@ -15,9 +15,9 @@ from bs4 import BeautifulSoup
 
 def parseArgs():
     parser = argparse.ArgumentParser(description='Package downloader. Now only from packages.debian.org', usage='%(prog)s -p tmux aptitude vim -d stable -P /dir', add_help=False)
-    parser.add_argument('-a', '--arch', action='store', dest='packageArch', help='package arch list, use: -a amd64 i386 arm64, default amd64, not multiply')
-    parser.add_argument('-p', '--package', nargs='*', dest='packageName', help='package name list, use: -p libmsgpack-dev aptitude tmux')
-    parser.add_argument('-d', '--distro', action='store', dest='packageDistrib', help='dist, use: -d sid. FYI: all for all, jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
+    parser.add_argument('-a', '--arch', action='store', dest='packageArch', required=True, help='package arch list, use: -a amd64 i386 arm64, default amd64, not multiply')
+    parser.add_argument('-p', '--package', nargs='*', dest='packageName', required=True, help='package name list, use: -p libmsgpack-dev aptitude tmux')
+    parser.add_argument('-d', '--distro', action='store', dest='packageDistrib', required=True, help='dist, use: -d sid. FYI: all for all, jessie, oldstable, stretch, stable, buster, testing, sid, unstable')
     parser.add_argument('-P', '--path', action='store', dest='path', default='/tmp', help='Files saving path, default: /tmp', metavar="FILE")
     subparsers = parser.add_subparsers()
     parser_link = subparsers.add_parser('link', parents=[parser], help='Get links, without downloading')
@@ -27,10 +27,6 @@ def parseArgs():
     parser_deps = subparsers.add_parser('deps', parents=[parser], help='Get dependencies list')
     parser_deps.set_defaults(act=deps)
 
-    if len(sys.argv) < 2:
-        parser.print_help()
-        sys.exit()
-    
     return parser.parse_args()
 
 http = urllib3.PoolManager(
