@@ -119,9 +119,19 @@ def deps(args):
     subString = 'Package: ' + package + '\n'
 
     file_content = open(txtFile, 'r')
+
+    packageFind = False
     for line in file_content:
-        if subString in line:
+        if subString not in line and packageFind == False:
+            continue
+        elif subString in line:
             print(line)
+            packageFind = True
+        elif 'Depends: ' in line and packageFind == True:
+            print(line)
+            packageFind = False
+
+
 
     os.remove(packagesFile)
     os.remove(txtFile)
