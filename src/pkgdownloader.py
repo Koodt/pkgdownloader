@@ -107,7 +107,7 @@ def deps(args):
     if link:
         comp = str(re.compile('(?<=pool/)[a-z-]*').findall(link)).strip('\"\"\'\'[]')
         arch = str(re.compile('(?<=_)[a-z].*(?=\.deb)').findall(link)).strip('\"\"\'\'[]')
-        package = str(re.compile('[^\/][a-z]+?(?=\_)').findall(link)).strip('\"\"\'\'[]')
+        package = str(re.compile('[^\/][a-z0-9]+?(?=\_[0-9])').findall(link)).strip('\"\"\'\'[]')
         packagesFile = getRepoPackagesFile(args.packageDistrib, arch, comp, filename)
     else:
         print('Link not found')
