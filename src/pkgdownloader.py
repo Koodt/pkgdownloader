@@ -104,7 +104,7 @@ def deps(args):
     if link:
         comp = str(re.compile('(?<=pool/)[a-z-]*').findall(link)).strip('\"\"\'\'[]')
         arch = str(re.compile('(?<=_)[a-z].*(?=\.deb)').findall(link)).strip('\"\"\'\'[]')
-        package = str(re.compile('[^\/][a-z0-9]+?(?=\_[0-9])').findall(link)).strip('\"\"\'\'[]')
+        package = str(re.compile('[^\/][a-z0-9-\.]+?(?=\_[0-9])').findall(link)).strip('\"\"\'\'[]')
         packagesFile = getRepoPackagesFile(args.packageDistrib, arch, comp, filename)
     else:
         print('Link not found')
@@ -118,14 +118,13 @@ def deps(args):
 
     subString = 'Package: ' + package + '\n'
 
-    file_content = open(txtFile, 'r')
-
+    txtContent = open(txtFile, 'r')
+    txtContent.close
     packageFind = False
-    for line in file_content:
+    for line in txtContent:
         if subString not in line and packageFind == False:
             continue
         elif subString in line:
-            print(line)
             packageFind = True
         elif 'Depends: ' in line and packageFind == True:
             print(line)
