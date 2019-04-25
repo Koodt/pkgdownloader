@@ -26,11 +26,12 @@ def parseArgs():
     parser_dl.set_defaults(act=dl)
     parser_deps = subparsers.add_parser('deps', parents=[parser], help='Get dependencies list')
     parser_deps.set_defaults(act=deps)
-    return parser.parse_args()
 
-if len(sys.argv) < 2:
-    parser.print_help()
-    sys.exit()
+    if len(sys.argv) < 2:
+        parser.print_help()
+        sys.exit()
+    
+    return parser.parse_args()
 
 http = urllib3.PoolManager(
         cert_reqs='CERT_REQUIRED',
