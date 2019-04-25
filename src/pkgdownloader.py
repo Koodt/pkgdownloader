@@ -103,8 +103,7 @@ def link(args):
 def deps(args):
     filename = str(uuid.uuid4())
     for package in args.packageName:
-        for arch in args.packageArch:
-            link = getLink(args.packageDistrib, package, arch)
+        link = getLink(args.packageDistrib, package, args.packageArch)
     if link:
         comp = str(re.compile('(?<=pool/)[a-z-]*').findall(link)).strip('\"\"\'\'[]')
         arch = str(re.compile('(?<=_)[a-z].*(?=\.deb)').findall(link)).strip('\"\"\'\'[]')
