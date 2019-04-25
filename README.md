@@ -16,9 +16,13 @@ pip uninstall pkgdownloader
 
 pkgdownload dl -p tmux aptitude vim -d stable -P /srv
 
-### Get link tmux from all distribution
+### Get link tmux from jessie distribution
 
-pkgdownload link -p tmux -d all
+pkgdownload link -p tmux -d jessie
+
+### Show dependencies mc amd64 from sid
+
+pkgdownload deps -p mc -a amd64 -d sid
 
 ### Arguments
 
