@@ -39,7 +39,6 @@ def checkLinkStatus(myURL):
 
 def getLink(distrib, package, arch):
     url = 'https://packages.debian.org/' + distrib + '/' + arch + '/' + package + '/download'
-    print(url)
     print('[...] Finding links for %s from %s' % (package, distrib))
     r = http.request('GET', url)
     soup = BeautifulSoup(r.data, 'html.parser')
@@ -81,7 +80,6 @@ def dl(args):
 
     for link in linksArray:
         fileName = str(re.compile('[^/]+$').findall(link)).strip('\"\"\'\'[]')
-        print(fileName)
         targetFile = args.path + '/' + fileName
         downloadFile(link, targetFile)
 
