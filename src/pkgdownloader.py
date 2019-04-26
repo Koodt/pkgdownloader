@@ -119,8 +119,9 @@ def deps(args):
     subString = 'Package: ' + package + '\n'
 
     txtContent = open(txtFile, 'r')
-    txtContent.close
+
     packageFind = False
+    depends = []
     for line in txtContent:
         if subString not in line and packageFind == False:
             continue
@@ -128,12 +129,19 @@ def deps(args):
             packageFind = True
         elif 'Depends: ' in line and packageFind == True:
             print(line)
+            data = line.split(' ')
+            for word in data:
+                chars = set('()<>=,')
+                if not any((c in word) for c in chars):
+                    depends.append(word)
             packageFind = False
 
-
+    for item in depends:
+        print(item)
 
     os.remove(packagesFile)
     os.remove(txtFile)
+    print(' ')
     print('%s and %s removed' % (packagesFile, txtFile))
 
 
