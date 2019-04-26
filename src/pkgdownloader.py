@@ -135,7 +135,7 @@ def deps(args):
                     depends.append(word)
             packageFind = False
 
-    print('\nDependencies for \'%s\' from \'%s\':\n' % (package, args.packageDistrib))
+    print('\nDependencies for \'%s:%s\' from \'%s\':\n' % (package, args.packageArch, args.packageDistrib))
 
     for item in depends:
         print(item)
