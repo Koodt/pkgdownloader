@@ -128,21 +128,22 @@ def deps(args):
         elif subString in line:
             packageFind = True
         elif 'Depends: ' in line and packageFind == True:
-            print(line)
             data = line.split(' ')
             for word in data:
-                chars = set('()<>=,')
+                chars = set('()<>=,:')
                 if not any((c in word) for c in chars):
                     depends.append(word)
             packageFind = False
+
+    print('\nDependencies for \'%s\' from \'%s\':\n' % (package, args.packageDistrib))
 
     for item in depends:
         print(item)
 
     os.remove(packagesFile)
     os.remove(txtFile)
-    print(' ')
-    print('%s and %s removed' % (packagesFile, txtFile))
+
+    print('\n%s and %s removed' % (packagesFile, txtFile))
 
 
 def main():
